@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { getCurrentUser, getProfile } from '@/lib/supabase/cached'
 import { SidebarNav } from '@/components/layout/SidebarNav'
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
+import { LogoutButton } from '@/components/auth/LogoutButton'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser()
@@ -49,6 +50,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 {isPro ? 'PRO' : 'FREE'}
               </span>
             </div>
+            <LogoutButton />
           </div>
         </div>
       </aside>
