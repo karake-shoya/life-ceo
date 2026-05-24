@@ -1,0 +1,7 @@
+name = "life-ceo"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".open-next/assets"
+
+[vars]
+NEXT_PUBLIC_APP_URL = "https://life-ceo.pages.dev"
