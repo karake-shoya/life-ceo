@@ -1,21 +1,13 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
-import { Profile } from '@/types/database'
+import { getCurrentUser, getProfile } from '@/lib/supabase/cached'
 import { SidebarNav } from '@/components/layout/SidebarNav'
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
+  const user = await getCurrentUser()
   if (!user) redirect('/login')
 
-  const { data: profileData } = await supabase
-    .from('profiles')
-    .select('plan, display_name')
-    .eq('id', user.id)
-    .single()
-
-  const profile = profileData as Pick<Profile, 'plan' | 'display_name'> | null
+  const profile = await getProfile(user.id)
   const plan = profile?.plan ?? 'free'
   const displayName = profile?.display_name ?? user.email ?? 'ユーザー'
   const initial = displayName.charAt(0).toUpperCase()
@@ -78,6 +70,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           {children}
         </div>
       </main>
+
+      {/* モバイルボトムナビ（aside 外に配置して display:none の影響を受けないようにする） */}
+      <MobileBottomNav />
     </div>
   )
 }

@@ -3,18 +3,20 @@ import { Goal, Kpi, KpiRecord } from '@/types/database'
 import { Target, Calendar, ChevronRight } from 'lucide-react'
 
 type Props = {
-  goal: Goal & { kpis: Kpi[] }
+  goal: Goal & { kpis: Kpi[] | null }
   latestRecordsByKpiId: Record<string, KpiRecord>
 }
 
+// "YYYY-MM-DD" をタイムゾーン問題なく日本語表記に変換する
+// new Date("YYYY-MM-DD") はUTC midnight として解釈されるためJSTで1日ずれる可能性があり使わない
+function formatDateJP(dateStr: string): string {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  return `${y}年${m}月${d}日`
+}
+
 export function GoalCard({ goal, latestRecordsByKpiId }: Props) {
-  const deadline = goal.deadline
-    ? new Date(goal.deadline).toLocaleDateString('ja-JP', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    : null
+  const deadline = goal.deadline ? formatDateJP(goal.deadline) : null
+  const kpis = goal.kpis ?? []
 
   return (
     <div className="rounded-2xl border border-stone-200 bg-white p-6">
@@ -52,13 +54,13 @@ export function GoalCard({ goal, latestRecordsByKpiId }: Props) {
       </div>
 
       {/* KPI一覧 */}
-      {goal.kpis.length === 0 ? (
+      {kpis.length === 0 ? (
         <div className="rounded-xl border border-dashed border-stone-200 py-5 text-center text-sm text-stone-400">
           KPI がまだ設定されていません
         </div>
       ) : (
         <div className="space-y-3">
-          {goal.kpis.map((kpi) => {
+          {kpis.map((kpi) => {
             const latestRecord = latestRecordsByKpiId[kpi.id]
             const progressPct =
               latestRecord && kpi.target_value > 0
