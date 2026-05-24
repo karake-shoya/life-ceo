@@ -60,30 +60,38 @@ export type Database = {
         Row: Profile
         Insert: Partial<Omit<Profile, 'id'>> & { id: string }
         Update: Partial<Omit<Profile, 'id'>>
+        Relationships: []
       }
       goals: {
         Row: Goal
         Insert: Omit<Goal, 'id' | 'created_at'> & { id?: string }
         Update: Partial<Omit<Goal, 'id' | 'created_at'>>
+        Relationships: []
       }
       kpis: {
         Row: Kpi
         Insert: Omit<Kpi, 'id' | 'created_at'> & { id?: string }
         Update: Partial<Omit<Kpi, 'id' | 'created_at'>>
+        Relationships: []
       }
       kpi_records: {
         Row: KpiRecord
         Insert: Omit<KpiRecord, 'id' | 'created_at'> & { id?: string }
         Update: Partial<Omit<KpiRecord, 'id' | 'created_at'>>
+        Relationships: []
       }
       monthly_reviews: {
         Row: MonthlyReview
         Insert: Omit<MonthlyReview, 'id' | 'created_at'> & { id?: string }
         Update: Partial<Omit<MonthlyReview, 'id' | 'created_at'>>
+        Relationships: []
       }
     }
+    Views: Record<string, never>
+    Functions: Record<string, never>
     Enums: {
       plan_type: PlanType
     }
+    CompositeTypes: Record<string, never>
   }
 }
