@@ -9,6 +9,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const profile = await getProfile(user.id)
   const plan = profile?.plan ?? 'free'
+  const isTrial = profile?.trial_ends_at ? new Date(profile.trial_ends_at) > new Date() : false
+  const isPro = plan === 'pro' || isTrial
   const displayName = profile?.display_name ?? user.email ?? 'ユーザー'
   const initial = displayName.charAt(0).toUpperCase()
 
@@ -39,12 +41,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               <p className="truncate text-xs font-medium text-stone-700">{displayName}</p>
               <span
                 className={`inline-block rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-                  plan === 'pro'
+                  isPro
                     ? 'bg-green-100 text-green-700'
                     : 'bg-stone-100 text-stone-500'
                 }`}
               >
-                {plan}
+                {isPro ? 'PRO' : 'FREE'}
               </span>
             </div>
           </div>
