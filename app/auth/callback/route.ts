@@ -35,5 +35,20 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${origin}/login?error=auth_error`)
   }
 
+  // 初回ログインの判定: goal が 0 件ならオンボーディングへ
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (user) {
+    const { count } = await supabase
+      .from('goals')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+    if ((count ?? 0) === 0) {
+      return NextResponse.redirect(`${origin}/onboarding`)
+    }
+  }
+
   return NextResponse.redirect(`${origin}${next}`)
 }
