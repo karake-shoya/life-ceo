@@ -1,165 +1,463 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import { Target, TrendingUp, BarChart3, CheckCircle2 } from 'lucide-react'
+import { CheckCircle2, Compass, Target, BarChart3, RefreshCw, ArrowRight } from 'lucide-react'
+import { Fraunces } from 'next/font/google'
 
-const FEATURES = [
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-fraunces',
+  weight: ['300', '400'],
+})
+
+const PAIN_POINTS = [
   {
-    icon: Target,
-    title: '理念・ビジョンから設計',
-    description: '「なぜやるのか」から始める目標設定。価値観・ビジョン・KGIを一貫させて人生の方向性を明確にします。',
+    number: '01',
+    title: '目標を立てても\n三日坊主になる',
+    description: '年初の決意も気づけば忘れ、また同じ失敗のパターンを繰り返している。',
   },
   {
-    icon: TrendingUp,
-    title: 'KPIで進捗を数値管理',
-    description: '目標を週次・月次のKPIに分解。数値で進捗を追うことで、今週やるべきことが一目でわかります。',
+    number: '02',
+    title: '今週何をすれば\n前進できるかわからない',
+    description: '漠然とした大きな夢はあっても、具体的な行動に落とし込めていない。',
   },
   {
-    icon: BarChart3,
-    title: '月次レビューで軌道修正',
-    description: '毎月の振り返りで達成率を確認し、次のアクションを決める。PDCAを回し続ける仕組みを提供します。',
+    number: '03',
+    title: '振り返りをせず\n改善できていない',
+    description: 'がんばっている気はするが、正しい方向に進んでいるか確かめられない。',
   },
 ]
 
-const PLAN_FEATURES = {
-  free: ['目標（KGI）1件', 'KPI 3件/目標', 'KPI実績入力'],
-  pro: ['目標（KGI）無制限', 'KPI 無制限', 'KPI実績入力', '月次レビュー', 'データエクスポート'],
-}
+const FRAMEWORK = [
+  {
+    icon: Compass,
+    step: '理念・ビジョン',
+    description: '「なぜやるか」「どう在りたいか」から設計する',
+  },
+  {
+    icon: Target,
+    step: 'KGI',
+    description: '数値・期限つきの最重要目標を1本定める',
+  },
+  {
+    icon: BarChart3,
+    step: 'KPI',
+    description: '週次・月次の先行指標で行動を管理する',
+  },
+  {
+    icon: RefreshCw,
+    step: '月次レビュー',
+    description: '毎月振り返り、戦略をすばやく修正する',
+  },
+]
+
+const HOW_IT_WORKS = [
+  {
+    num: '01',
+    title: '目標を設計する',
+    desc: '理念・ビジョンから逆算してKGIとKPIを設定。自分だけの戦略マップが完成する。',
+  },
+  {
+    num: '02',
+    title: '毎週・毎月記録する',
+    desc: 'KPIの実績を入力するだけ。進捗が数値で可視化され、次の打ち手が浮かび上がる。',
+  },
+  {
+    num: '03',
+    title: '振り返り、修正する',
+    desc: '月次レビューで達成率を分析。うまくいっていることを伸ばし、課題に集中する。',
+  },
+]
+
+const FREE_FEATURES = ['目標（KGI）1件', 'KPI 3件/目標', 'KPI実績入力']
+const PRO_FEATURES = ['目標（KGI）無制限', 'KPI 無制限', 'KPI実績入力', '月次レビュー', 'データエクスポート']
+
+const MOCK_KPIS = [
+  { label: '副業収入', value: '+¥120K' },
+  { label: '学習時間', value: '42h' },
+  { label: '達成率', value: '78%' },
+]
 
 export default function LandingPage() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className={fraunces.variable}>
+      <style>{`
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(22px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .fade-up { animation: fadeInUp 0.9s ease-out forwards; opacity: 0; }
+        .d1 { animation-delay: 0.1s; }
+        .d2 { animation-delay: 0.25s; }
+        .d3 { animation-delay: 0.4s; }
+        .d4 { animation-delay: 0.6s; }
+
+        @keyframes spinRing { to { transform: rotate(360deg); } }
+        .ring-spin { animation: spinRing 28s linear infinite; }
+
+        @keyframes pulse-dot {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+        .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+        .hero-bg {
+          background:
+            radial-gradient(ellipse 90% 55% at 50% 0%, rgba(22,101,52,0.5) 0%, transparent 68%),
+            #09180b;
+        }
+        .hero-grid {
+          background-image:
+            linear-gradient(rgba(255,255,255,0.033) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.033) 1px, transparent 1px);
+          background-size: 72px 72px;
+        }
+        .serif { font-family: var(--font-fraunces), Georgia, serif; }
+        .progress-bar {
+          background: linear-gradient(90deg, #15803d, #4ade80);
+        }
+      `}</style>
+
       {/* ナビゲーション */}
-      <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-sm">
-        <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-          <span className="text-lg font-bold tracking-tight">LifeCEO</span>
-          <div className="flex items-center gap-3">
+      <header className="sticky top-0 z-50 border-b border-stone-200 bg-white/95 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-green-800">
+              <span className="text-[11px] font-bold text-white">LC</span>
+            </div>
+            <span className="font-semibold tracking-tight text-stone-900">LifeCEO</span>
+          </div>
+          <div className="flex items-center gap-2">
             <Link href="/login">
-              <Button variant="ghost" size="sm">ログイン</Button>
+              <Button variant="ghost" size="sm" className="text-stone-600 hover:text-stone-900">
+                ログイン
+              </Button>
             </Link>
             <Link href="/login">
-              <Button size="sm">無料で始める</Button>
+              <Button
+                size="sm"
+                className="rounded-full bg-green-800 px-5 text-white hover:bg-green-900 gap-1.5"
+              >
+                無料で始める
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
             </Link>
           </div>
         </div>
       </header>
 
-      <main className="flex-1">
+      <main>
         {/* ヒーロー */}
-        <section className="mx-auto max-w-5xl px-4 py-24 text-center">
-          <Badge variant="secondary" className="mb-6">先行登録受付中 — 永久に先行価格を適用</Badge>
-          <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-            経営思考で、<br className="sm:hidden" />
-            <span className="text-zinc-500">自分の人生を設計する</span>
-          </h1>
-          <p className="mx-auto mb-10 max-w-xl text-lg text-zinc-500">
-            理念・ビジョン・KGI・KPI・月次レビュー。
-            企業経営のフレームワークを個人に適用し、
-            目標達成の確度を高めます。
-          </p>
-          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            <Link href="/login">
-              <Button size="lg" className="w-full sm:w-auto px-8">
-                無料で始める
-              </Button>
-            </Link>
-            <p className="text-sm text-zinc-400">クレジットカード不要 · 14日間Proトライアル付き</p>
+        <section className="hero-bg relative overflow-hidden pb-32 pt-24 sm:pt-32">
+          <div className="hero-grid absolute inset-0" />
+
+          {/* 装飾リング */}
+          <div className="pointer-events-none absolute right-[-10%] top-[-12%] h-[560px] w-[560px] opacity-[0.07]">
+            <div className="ring-spin h-full w-full rounded-full border border-green-400" />
+            <div className="absolute inset-14 rounded-full border border-green-300" />
+            <div className="absolute inset-28 rounded-full border border-green-200" />
           </div>
-        </section>
 
-        <Separator />
+          <div className="relative mx-auto max-w-5xl px-6 text-center">
+            {/* バッジ */}
+            <div className="fade-up mb-8 inline-flex items-center gap-2 rounded-full border border-green-800/60 bg-green-950/50 px-4 py-1.5 text-xs font-medium text-green-400">
+              <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-green-400" />
+              先行登録受付中 · 先行価格は永久に適用されます
+            </div>
 
-        {/* 機能紹介 */}
-        <section className="mx-auto max-w-5xl px-4 py-20">
-          <h2 className="mb-12 text-center text-2xl font-bold">LifeCEO でできること</h2>
-          <div className="grid gap-6 sm:grid-cols-3">
-            {FEATURES.map(({ icon: Icon, title, description }) => (
-              <Card key={title} className="border-zinc-100">
-                <CardHeader className="pb-3">
-                  <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-100">
-                    <Icon className="h-5 w-5 text-zinc-700" />
+            {/* ヘッドライン */}
+            <h1 className="fade-up d1 serif mb-6 text-6xl font-light leading-[1.08] text-white sm:text-7xl md:text-8xl">
+              人生を、<br />
+              <span className="text-green-400">経営する</span>。
+            </h1>
+
+            {/* サブコピー */}
+            <p className="fade-up d2 mx-auto mb-10 max-w-md text-base leading-relaxed text-stone-400 sm:text-lg">
+              理念から始め、数値で管理し、毎月振り返る。<br />
+              企業経営のフレームワークが、<br className="hidden sm:block" />
+              あなたの目標達成を根底から変える。
+            </p>
+
+            {/* CTA */}
+            <div className="fade-up d3 flex flex-col items-center gap-3">
+              <Link href="/login">
+                <Button
+                  size="lg"
+                  className="rounded-full bg-green-600 px-10 py-6 text-base font-semibold text-white hover:bg-green-500 gap-2"
+                >
+                  無料で始める
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+              <p className="text-xs text-stone-500">クレジットカード不要 · 14日間 Pro トライアル付き</p>
+            </div>
+
+            {/* ダッシュボードモック */}
+            <div className="fade-up d4 mx-auto mt-20 max-w-xl rounded-2xl border border-white/10 bg-white/5 p-6 text-left backdrop-blur-sm">
+              <div className="mb-4 flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-widest text-green-400">
+                  年間目標 進捗
+                </span>
+                <span className="text-xs text-stone-500">2026年</span>
+              </div>
+              <div className="mb-5">
+                <p className="serif mb-1 text-3xl font-light text-white">
+                  ¥2,400,000{' '}
+                  <span className="text-lg text-stone-500">/ ¥6,000,000</span>
+                </p>
+                <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                  <div className="progress-bar h-full w-[40%] rounded-full" />
+                </div>
+                <p className="mt-1 text-right text-xs text-green-400">40% 達成</p>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                {MOCK_KPIS.map(({ label, value }) => (
+                  <div key={label} className="rounded-lg bg-white/5 px-3 py-2.5">
+                    <p className="text-[11px] text-stone-400">{label}</p>
+                    <p className="text-sm font-semibold text-white">{value}</p>
                   </div>
-                  <CardTitle className="text-base">{title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-zinc-500">{description}</p>
-                </CardContent>
-              </Card>
-            ))}
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
-        <Separator />
+        {/* 課題提起 */}
+        <section className="bg-white py-24">
+          <div className="mx-auto max-w-5xl px-6">
+            <div className="mb-16 text-center">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-green-700">
+                The Problem
+              </p>
+              <h2 className="serif text-4xl font-light text-stone-900 sm:text-5xl">
+                こんな悩み、<br />ありませんか？
+              </h2>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-3">
+              {PAIN_POINTS.map(({ number, title, description }) => (
+                <div
+                  key={number}
+                  className="group rounded-2xl border border-stone-100 bg-stone-50/80 p-8 transition-all hover:border-green-200 hover:bg-green-50/40"
+                >
+                  <div className="serif mb-5 text-5xl font-light text-stone-200 transition-colors group-hover:text-green-100">
+                    {number}
+                  </div>
+                  <h3 className="mb-3 whitespace-pre-line text-lg font-semibold leading-snug text-stone-900">
+                    {title}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-stone-500">{description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* フレームワーク */}
+        <section className="bg-[#f6f8f6] py-24">
+          <div className="mx-auto max-w-5xl px-6">
+            <div className="mb-16 text-center">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-green-700">
+                Framework
+              </p>
+              <h2 className="serif text-4xl font-light text-stone-900 sm:text-5xl">
+                LifeCEO の<br />フレームワーク
+              </h2>
+              <p className="mt-4 text-stone-500">
+                経営者が使う4つの思考ツールを、個人の目標管理に適用する
+              </p>
+            </div>
+
+            {/* デスクトップ表示 */}
+            <div className="hidden overflow-hidden rounded-2xl border border-stone-200 sm:grid sm:grid-cols-4 sm:divide-x sm:divide-stone-200">
+              {FRAMEWORK.map(({ icon: Icon, step, description }) => (
+                <div
+                  key={step}
+                  className="flex flex-col items-center bg-white px-6 py-10 text-center transition-colors hover:bg-green-50/50"
+                >
+                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl border border-green-100 bg-green-50">
+                    <Icon className="h-6 w-6 text-green-800" />
+                  </div>
+                  <div className="mb-2 text-sm font-bold text-green-800">{step}</div>
+                  <p className="text-xs leading-relaxed text-stone-500">{description}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* モバイル表示 */}
+            <div className="flex flex-col gap-3 sm:hidden">
+              {FRAMEWORK.map(({ icon: Icon, step, description }, i) => (
+                <div key={step}>
+                  <div className="flex items-start gap-4 rounded-xl border border-stone-100 bg-white p-5 shadow-sm">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-green-800">
+                      <Icon className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <div className="mb-1 text-sm font-bold text-green-800">{step}</div>
+                      <p className="text-sm leading-relaxed text-stone-500">{description}</p>
+                    </div>
+                  </div>
+                  {i < FRAMEWORK.length - 1 && (
+                    <div className="flex justify-center py-2">
+                      <div className="h-5 w-px bg-stone-200" />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* How it works */}
+        <section className="bg-white py-24">
+          <div className="mx-auto max-w-3xl px-6">
+            <div className="mb-16 text-center">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-green-700">
+                How it works
+              </p>
+              <h2 className="serif text-4xl font-light text-stone-900 sm:text-5xl">
+                3ステップで<br />始められる
+              </h2>
+            </div>
+            <div>
+              {HOW_IT_WORKS.map(({ num, title, desc }) => (
+                <div
+                  key={num}
+                  className="flex gap-8 border-b border-stone-100 py-10 last:border-0"
+                >
+                  <div className="serif shrink-0 text-6xl font-light leading-none text-stone-100 sm:text-7xl">
+                    {num}
+                  </div>
+                  <div className="pt-1">
+                    <h3 className="mb-2 text-xl font-semibold text-stone-900">{title}</h3>
+                    <p className="leading-relaxed text-stone-500">{desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-12 text-center">
+              <Link href="/login">
+                <Button
+                  size="lg"
+                  className="rounded-full bg-green-800 px-10 py-6 text-base font-semibold text-white hover:bg-green-900 gap-2"
+                >
+                  無料で始める
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+              <p className="mt-3 text-sm text-stone-400">クレジットカード不要 · 14日間 Pro トライアル付き</p>
+            </div>
+          </div>
+        </section>
 
         {/* 料金 */}
-        <section className="mx-auto max-w-5xl px-4 py-20">
-          <div className="mb-4 text-center">
-            <h2 className="text-2xl font-bold">シンプルな料金プラン</h2>
-            <p className="mt-2 text-sm text-zinc-500">先行登録者は永久に先行価格が適用されます</p>
-          </div>
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 max-w-2xl mx-auto">
-            {/* 無料プラン */}
-            <Card className="border-zinc-200">
-              <CardHeader>
-                <CardTitle className="text-base font-medium text-zinc-500">無料プラン</CardTitle>
-                <div className="mt-2">
-                  <span className="text-3xl font-bold">¥0</span>
-                  <span className="text-sm text-zinc-400"> /月</span>
+        <section className="bg-[#f6f8f6] py-24">
+          <div className="mx-auto max-w-3xl px-6">
+            <div className="mb-16 text-center">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-green-700">
+                Pricing
+              </p>
+              <h2 className="serif text-4xl font-light text-stone-900 sm:text-5xl">シンプルな料金</h2>
+              <p className="mt-4 text-stone-500">先行登録者は永久に先行価格が適用されます</p>
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2">
+              {/* 無料プラン */}
+              <div className="flex flex-col rounded-2xl border border-stone-200 bg-white p-8">
+                <p className="mb-1 text-sm font-medium text-stone-400">無料プラン</p>
+                <div className="mb-1 flex items-end gap-1">
+                  <span className="serif text-5xl font-light text-stone-900">¥0</span>
+                  <span className="mb-1.5 text-sm text-stone-400">/月</span>
                 </div>
-              </CardHeader>
-              <CardContent className="flex flex-col gap-4">
-                <ul className="space-y-2">
-                  {PLAN_FEATURES.free.map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm">
-                      <CheckCircle2 className="h-4 w-4 text-zinc-400" />
+                <p className="mb-6 text-sm text-stone-400">まずは無料で体験する</p>
+                <ul className="mb-8 flex-1 space-y-3">
+                  {FREE_FEATURES.map((f) => (
+                    <li key={f} className="flex items-center gap-3 text-sm text-stone-600">
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-stone-300" />
                       {f}
                     </li>
                   ))}
                 </ul>
                 <Link href="/login">
-                  <Button variant="outline" className="w-full">無料で始める</Button>
+                  <Button
+                    variant="outline"
+                    className="w-full rounded-full border-stone-300 text-stone-700 hover:bg-stone-50"
+                  >
+                    無料で始める
+                  </Button>
                 </Link>
-              </CardContent>
-            </Card>
+              </div>
 
-            {/* Proプラン */}
-            <Card className="border-zinc-900 ring-1 ring-zinc-900">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base font-medium">Pro プラン</CardTitle>
-                  <Badge>先行価格</Badge>
+              {/* Pro プラン */}
+              <div className="relative flex flex-col rounded-2xl border-2 border-green-800 bg-white p-8 shadow-lg shadow-green-900/10">
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 whitespace-nowrap">
+                  <span className="rounded-full bg-green-800 px-4 py-1 text-xs font-semibold text-white">
+                    先行価格 · 永久適用
+                  </span>
                 </div>
-                <div className="mt-2">
-                  <span className="text-3xl font-bold">¥480</span>
-                  <span className="text-sm text-zinc-400"> /月</span>
+                <p className="mb-1 text-sm font-medium text-stone-600">Pro プラン</p>
+                <div className="mb-1 flex items-end gap-1">
+                  <span className="serif text-5xl font-light text-stone-900">¥480</span>
+                  <span className="mb-1.5 text-sm text-stone-500">/月</span>
                 </div>
-                <p className="text-xs text-zinc-400">年払い ¥3,800/年（月換算 ¥317）</p>
-              </CardHeader>
-              <CardContent className="flex flex-col gap-4">
-                <ul className="space-y-2">
-                  {PLAN_FEATURES.pro.map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm">
-                      <CheckCircle2 className="h-4 w-4 text-zinc-900" />
+                <p className="text-xs text-stone-400">年払い ¥3,800/年（月換算 ¥317）</p>
+                <p className="mb-6 text-xs text-stone-400">通常価格 ¥980/月（3ヶ月後）</p>
+                <ul className="mb-8 flex-1 space-y-3">
+                  {PRO_FEATURES.map((f) => (
+                    <li key={f} className="flex items-center gap-3 text-sm text-stone-700">
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-green-700" />
                       {f}
                     </li>
                   ))}
                 </ul>
                 <Link href="/login">
-                  <Button className="w-full">14日間無料で試す</Button>
+                  <Button className="w-full rounded-full bg-green-800 py-6 font-semibold text-white hover:bg-green-900">
+                    14日間無料で試す
+                  </Button>
                 </Link>
-                <p className="text-center text-xs text-zinc-400">通常価格 ¥980/月（3ヶ月後）</p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 最終CTA */}
+        <section className="hero-bg relative overflow-hidden py-28 text-center">
+          <div className="hero-grid absolute inset-0" />
+          <div className="relative mx-auto max-w-2xl px-6">
+            <h2 className="serif mb-6 text-4xl font-light text-white sm:text-5xl md:text-6xl">
+              今日から、<br />人生の CEO に。
+            </h2>
+            <p className="mx-auto mb-10 max-w-sm leading-relaxed text-stone-400">
+              思考するだけでなく、行動し、数値で証明する。<br />
+              LifeCEO が、あなたの人生経営をサポートします。
+            </p>
+            <Link href="/login">
+              <Button
+                size="lg"
+                className="rounded-full bg-green-600 px-12 py-7 text-lg font-semibold text-white hover:bg-green-500 gap-2"
+              >
+                無料で始める
+                <ArrowRight className="h-5 w-5" />
+              </Button>
+            </Link>
+            <p className="mt-4 text-sm text-stone-500">クレジットカード不要 · 14日間 Pro トライアル付き</p>
           </div>
         </section>
       </main>
 
       {/* フッター */}
-      <footer className="border-t py-8">
-        <div className="mx-auto max-w-5xl px-4 text-center text-sm text-zinc-400">
-          © 2026 LifeCEO · <a href="/terms" className="hover:text-zinc-600">利用規約</a> · <a href="/privacy" className="hover:text-zinc-600">プライバシーポリシー</a>
+      <footer className="border-t border-white/10 bg-[#09180b] py-10">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 sm:flex-row">
+          <div className="flex items-center gap-2">
+            <div className="flex h-6 w-6 items-center justify-center rounded bg-green-800">
+              <span className="text-[10px] font-bold text-white">LC</span>
+            </div>
+            <span className="text-sm font-semibold text-stone-300">LifeCEO</span>
+          </div>
+          <p className="text-xs text-stone-500">
+            © 2026 LifeCEO ·{' '}
+            <a href="/terms" className="transition-colors hover:text-stone-300">利用規約</a>
+            {' '}·{' '}
+            <a href="/privacy" className="transition-colors hover:text-stone-300">プライバシーポリシー</a>
+          </p>
         </div>
       </footer>
     </div>
