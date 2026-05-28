@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { DatePicker } from '@/components/ui/date-picker'
 import { Kpi, KpiRecord } from '@/types/database'
 import { addKpiRecord, deleteKpi } from '@/app/actions/kpi'
 
@@ -157,14 +158,10 @@ export function KpiCard({ kpi, latestRecord, recentRecords }: Props) {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor={`record-date-${kpi.id}`} className="text-xs">
-                  日付
-                </Label>
-                <Input
-                  id={`record-date-${kpi.id}`}
-                  type="date"
+                <Label className="text-xs">日付</Label>
+                <DatePicker
                   value={recordDate}
-                  onChange={(e) => setRecordDate(e.target.value)}
+                  onChange={setRecordDate}
                   className="h-9 text-sm"
                 />
               </div>

@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { DatePicker } from '@/components/ui/date-picker'
 import { createGoalWithKpis } from '@/app/actions/goal'
 
 type KpiField = {
@@ -222,12 +223,11 @@ export function GoalCreateForm({ isPro }: Props) {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="deadline">達成期限</Label>
-              <Input
-                id="deadline"
-                type="date"
+              <Label>達成期限</Label>
+              <DatePicker
                 value={deadline}
-                onChange={(e) => setDeadline(e.target.value)}
+                onChange={setDeadline}
+                placeholder="期限を選択（任意）"
               />
             </div>
           </div>

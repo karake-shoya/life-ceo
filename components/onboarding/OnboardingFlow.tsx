@@ -6,6 +6,7 @@ import { Loader2, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { DatePicker } from '@/components/ui/date-picker'
 import { createGoalWithKpis } from '@/app/actions/goal'
 
 type Category = {
@@ -232,12 +233,11 @@ export function OnboardingFlow() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="ob-deadline">達成期限（任意）</Label>
-              <Input
-                id="ob-deadline"
-                type="date"
+              <Label>達成期限（任意）</Label>
+              <DatePicker
                 value={deadline}
-                onChange={(e) => setDeadline(e.target.value)}
+                onChange={setDeadline}
+                placeholder="期限を選択（任意）"
               />
             </div>
           </div>
